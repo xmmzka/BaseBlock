@@ -13,6 +13,7 @@ local UpdateSequence = {
     lateUpdateSequence = {}
 }
 
+
 function UpdateSequence.preHandlerWrapper()
     for key, value in pairs(UpdateSequence.frameworkFixedUpdateSequence) do
         value()
@@ -130,54 +131,88 @@ function Logger.getMinLogLevelName()
     return Logger.LogLevelNames[Logger.minLogLevel]
 end
 
---- @class Triplet
+--- @class Hash
+local Hash = {}
+function Hash.toString(input)
+    if type(input) == "string" then
+        return input
+    elseif type(input) == "number" then
+        return tostring(input)
+    elseif type(input) == "table" then
+        local str = ""
+        for k, v in pairs(input) do
+            str = str .. Hash.toString(k) .. Hash.toString(v)
+        end
+        return str
+    else
+        Logger.error("Unsupported type: " .. type(input))
+    end
+end
+
+function Hash.fastHash(input)
+    local str = Hash.toString(input)
+    local hash = 0x811C9DC5
+    local prime = 0x01000193
+
+    for i = 1, #str do
+        hash = hash ~ string.byte(str, i)
+        hash = (hash * prime) & 0xFFFFFFFF
+    end
+    return hash
+end
+
+--- @class Vector
 --- @field x number
 --- @field y number
 --- @field z number
-local Triplet = {}
-Triplet.__index = Triplet
-function Triplet.new(x, y, z)
+local Vector = {}
+Vector.__index = Vector
+function Vector.new(x, y, z)
     if not (x and y and z) then
         Logger.error("The parameter cannot be nil.")
         return nil
     end
-    local self = setmetatable({}, Triplet)
+    local self = setmetatable({}, Vector)
     self.x = x
     self.y = y
     self.z = z
     return self
 end
 
-function Triplet:toVector3()
+function Vector.fromProtoVector()
+
+end
+
+function Vector:toProtoVector()
     ---@diagnostic disable-next-line: param-type-mismatch
     return GlobalAPI.vector3(self.x, self.y, self.z)
 end
 
-function Triplet:zoom(scale)
-    return Triplet.new(self.x * scale, self.y * scale, self.z * scale)
+function Vector:zoom(scale)
+    return Vector.new(self.x * scale, self.y * scale, self.z * scale)
 end
 
-function Triplet:__add(v2)
-    return Triplet.new(self.x + v2.x, self.y + v2.y, self.z + v2.z)
+function Vector:__add(v)
+    return Vector.new(self.x + v.x, self.y + v.y, self.z + v.z)
 end
 
-function Triplet:__sub(v2)
-    return Triplet.new(self.x - v2.x, self.y - v2.y, self.z - v2.z)
+function Vector:__sub(v)
+    return Vector.new(self.x - v.x, self.y - v.y, self.z - v.z)
 end
 
-function Triplet:dot(v2)
-    return self.x * v2.x + self.y * v2.y + self.z * v2.z
+function Vector:dot(v)
+    return self.x * v.x + self.y * v.y + self.z * v.z
 end
 
-function Triplet:cross(v2)
-    return Triplet.new(
-        self.y * v2.z - self.z * v2.y,
-        self.z * v2.x - self.x * v2.z,
-        self.x * v2.y - self.y * v2.x
+function Vector:cross(v)
+    return Vector.new(
+        self.y * v.z - self.z * v.y,
+        self.z * v.x - self.x * v.z,
+        self.x * v.y - self.y * v.x
     )
 end
 
-function Triplet:update(x, y, z)
+function Vector:update(x, y, z)
     if not (x and y and z) then
         Logger.error("The parameter cannot be nil.")
         return self
@@ -189,12 +224,12 @@ function Triplet:update(x, y, z)
     end
 end
 
-function Triplet:toQuaternion()
+function Vector:toQuaternion()
     ---@diagnostic disable-next-line: undefined-field
     return math.Quaternion(self.x, self.y, self.z)
 end
 
-function Triplet:__tostring()
+function Vector:__tostring()
     return string.format("(%d, %d, %d)", self.x, self.y, self.z)
 end
 
@@ -372,10 +407,114 @@ function FrameTimer:destroy()
     self.destroyed = true
 end
 
---- @class 
+-- TODO: Camp
+--- @class Camp
+--- @field associativePlayerList table
+local Camp = {}
+Camp.__index = Camp
+
+function Camp.new()
+    local self = setmetatable({}, Camp)
+    return self
+end
+
+-- Do not return this class
+--- @class PlayerMetaInfo
+local PlayerMetaInfo = {
+    presetTotalPlayerNum = 0,
+    originalPlayerNum = 0,
+    globalPlayerList = {},
+    campList = {}
+}
 
 
 
+--- @class PlayerManager
+
+
+--- @enum ObjectType
+local ObjectType = {
+    COMPONENT = 0,
+    TRIGGER = 1,
+    LOGIC = 2,
+    EFFECT = 3
+}
+
+
+
+--- @class ObjectRaw
+--- @field presetID number
+--- @field objectType ObjectType
+--- @field position Vector
+--- @field rotation Vector
+--- @field scale Vector
+--- @field player any
+--- @field effectOffset Vector
+local ObjectRaw = {}
+ObjectRaw.__index = ObjectRaw
+function ObjectRaw.new()
+    local self = setmetatable({}, ObjectRaw)
+    return self
+end
+
+--- @class Object
+--- @field raw ObjectRaw
+--- @field protoInstance Unit
+local Object = {}
+Object.__index = Object
+function Object.new(objectRaw, objectInstance)
+    local self = setmetatable({}, Object)
+    self.raw = objectRaw
+    self.protoInstance = objectInstance
+    return self
+end
+
+function Object:getObjectType()
+    return self.raw.objectType
+end
+
+function Object:getObjectPosition()
+    local retVector = Vector.new()
+end
+
+-- GameAPI.create_obstacle(_u_key, _pos, _rotation, _scale, _role)
+--- @class Generator
+local Generator = {}
+--- @param presetID number
+--- @param position Vector
+--- @param rotation Vector
+--- @param scale Vector
+function Generator.createComponent(presetID, position, rotation, scale, player)
+    --- @diagnostic disable-next-line: param-type-mismatch
+    return GameAPI.create_obstacle(presetID, position:toProtoVector(), rotation:toQuaternion(), scale:toProtoVector(),
+        player)
+end
+
+function Generator.createTriggerSpace(presetID, position, rotation, scale, player)
+    --- @diagnostic disable-next-line: param-type-mismatch
+    return GameAPI.create_customtriggerspace(presetID, position:toProtoVector(), rotation:toQuaternion(),
+        scale:toProtoVector(), player)
+end
+
+function Generator.createLogicSpace(presetID, position, rotation, scale, player)
+    --- @diagnostic disable-next-line: param-type-mismatch
+    return GameAPI.create_triggerspace(presetID, position:toProtoVector(), rotation:toQuaternion(), scale:toProtoVector(),
+        player)
+end
+
+function Generator.createEffect(presetID, position, rotation, scale, modelSocket, player)
+    if modelSocket then
+        GameAPI.create_sfx_with_socket_offset()
+    end
+end
+
+--- @param objectRaw ObjectRaw
+function Generator.create(objectRaw)
+    if objectRaw.objectType == ObjectType.COMPONENT then
+        Generator.createComponent(objectRaw.presetID, objectRaw.position, objectRaw.rotation, objectRaw.scale,
+            objectRaw.player)
+    end
+end
 
 -- module initialize
 -- Do not return this function.
