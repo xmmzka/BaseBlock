@@ -4,6 +4,18 @@ local BaseBlock = {
     LOGICAL_FRAME_INTERVAL = 0.033333333
 }
 
+
+--- @class Util
+local Util = {}
+function Util.indexOf(table, elem)
+    for index, value in ipairs(table) do
+        if value == elem then
+            return index
+        end
+    end
+    return nil
+end
+
 -- Do not return this class.
 --- @class UpdateSequence
 local UpdateSequence = {
@@ -159,6 +171,80 @@ function Hash.fastHash(input)
         hash = (hash * prime) & 0xFFFFFFFF
     end
     return hash
+end
+
+--- @class Test
+local Test = {
+    functionNum = 0,
+    functionList = {},
+    result = {},
+    success = 0,
+    failures = 0
+}
+function Test.init()
+    Logger.info("Initialize unit test.")
+
+    Test.functionNum = 0
+    Test.functionList = {}
+    Test.result = {}
+    Test.success = 0
+    Test.failures = 0
+
+    local testFunctionList = require("Test")
+    if testFunctionList then
+        Logger.info("Locate test file in directory.")
+        local testCount = 0
+        for key, value in pairs(testFunctionList) do
+            if type(value) == "function" then
+                testCount = testCount + 1
+                Test.functionList[key] = value
+            end
+        end
+        Test.functionNum = testCount
+    else
+        Logger.info("Skip test.")
+    end
+end
+
+function Test.test()
+    for key, value in pairs(Test.functionList) do
+        Test.result[key] = {
+            status = nil,
+            result = nil
+        }
+        local status, result = pcall(value)
+        Test.result[key].status = status
+        Test.result[key].result = result
+        if status then
+            Test.success = Test.success + 1
+        else
+            Test.failures = Test.failures + 1
+        end
+    end
+end
+
+function Test.output()
+    local consoleOutputHead = "[ UNIT TEST ]\nTimestamp: %s\nPass: %s\nFailures: %s\n\n"
+    local body = "function: %s >>>>>>>>>>\ninfo: %s\n\n"
+    local consoleOutputBody = ""
+    for key, value in pairs(Test.result) do
+        if value.status ~= true then
+            consoleOutputBody = consoleOutputBody .. string.format(body, value.status, value.result)
+        end
+    end
+    local consoleOutputTail = ""
+    if Test.success ~= Test.functionNum then
+        consoleOutputTail = ">> FAILURE <<"
+    else
+        consoleOutputTail = ">> SUCCESS <<"
+    end
+    print(consoleOutputHead .. consoleOutputBody .. consoleOutputTail)
+end
+
+function Test.Assert(expected, actual)
+    if expected ~= actual then
+        error("Assert Failed! expected: " .. expected .. ", actual: " .. actual)
+    end
 end
 
 --- @class Vector
@@ -407,30 +493,102 @@ function FrameTimer:destroy()
     self.destroyed = true
 end
 
--- TODO: Camp
---- @class Camp
---- @field associativePlayerList table
-local Camp = {}
-Camp.__index = Camp
-
-function Camp.new()
-    local self = setmetatable({}, Camp)
-    return self
-end
-
 -- Do not return this class
 --- @class PlayerMetaInfo
 local PlayerMetaInfo = {
-    presetTotalPlayerNum = 0,
+    -- 进入游戏的初始玩家数
     originalPlayerNum = 0,
-    globalPlayerList = {},
-    campList = {}
+    -- 阵营计数
+    campNum = 0,
+    -- 原始类型的玩家索引表
+    globalProtoPlayerList = {},
+    -- 原始类型的阵营索引列表 key: index, value: protoCamp
+    globalprotoCampList = {},
+    -- 阵营Name索引表
+    globalprotoCampNameList = {},
+    -- 按阵营分组的玩家列表
+    campPlayerGroupList = {},
+    -- 按globalProtoPlayerList排序的原始类型角色列表 value: unit
+    globalProtoRoleList = {},
 }
 
-
+function PlayerMetaInfo.init()
+    local protoCampManager = GameAPI.get_camp_mgr()
+    local tempProtoCampList = protoCampManager.get_all_camps()
+    -- 初始化阵营表
+    local campCount = 0
+    for index, value in ipairs(tempProtoCampList) do
+        campCount = campCount + 1
+        PlayerMetaInfo.globalprotoCampList[campCount] = value
+        PlayerMetaInfo.globalprotoCampNameList[campCount] = value.get_name()
+    end
+    PlayerMetaInfo.campNum = campCount
+    -- 初始化角色表，玩家表
+    local tempRoleList = GameAPI.get_map_characters()
+    local indexCount = 0
+    for index, value in ipairs(tempRoleList) do
+        indexCount = indexCount + 1
+        table.insert(PlayerMetaInfo.globalProtoRoleList, indexCount, value)
+        table.insert(PlayerMetaInfo.globalProtoPlayerList, indexCount, value.get_ctrl_role())
+    end
+    -- 初始化阵营组索引表
+    for index, player in ipairs(PlayerMetaInfo.globalProtoPlayerList) do
+        local camp = player.get_camp()
+        local campID = Util.indexOf(PlayerMetaInfo.globalprotoCampList, camp)
+        if campID == nil then
+            Logger.warn("Players with an unknown faction are automatically classified as [unknown].")
+            if PlayerMetaInfo.campPlayerGroupList["unknown"] == nil then
+                PlayerMetaInfo.campPlayerGroupList["unknown"] = {}
+            end
+            table.insert(PlayerMetaInfo.campPlayerGroupList["unknown"],
+                Util.indexOf(PlayerMetaInfo.globalProtoPlayerList(player)))
+        else
+            if PlayerMetaInfo.campPlayerGroupList[campID] == nil then
+                PlayerMetaInfo.campPlayerGroupList[campID] = {}
+            end
+            table.insert(PlayerMetaInfo.campPlayerGroupList[campID],
+                Util.indexOf(PlayerMetaInfo.globalProtoPlayerList, player))
+        end
+    end
+end
 
 --- @class PlayerManager
+local PlayerManager = {}
 
+function PlayerManager.getPlayerIndexByProto(player)
+    local playerIndex = Util.indexOf(PlayerMetaInfo.globalProtoPlayerList, player)
+    if playerIndex then
+        return playerIndex
+    else
+        Logger.error("The player for the query does not exist.")
+        return nil
+    end
+end
+
+function PlayerManager.getProtoPlayerByIndex(playerIndex)
+    if playerIndex > PlayerMetaInfo.originalPlayerNum then
+        Logger.error("The player index for the query does not exist.")
+        return nil
+    else
+        if PlayerMetaInfo.globalProtoPlayerList[playerIndex] == nil then
+            Logger.warn("The index points to a player with a null value.")
+        end
+        return PlayerMetaInfo.globalProtoPlayerList[playerIndex]
+    end
+end
+
+function PlayerManager.getFrameworkPlayerMetaData()
+    return PlayerMetaInfo
+end
+
+function PlayerManager.getPlayerNameByIndex(playerIndex)
+    local player = PlayerManager.getProtoPlayerByIndex(playerIndex)
+    if player then
+        return string(player.get_name())
+    else
+        return nil
+    end
+end
 
 --- @enum ObjectType
 local ObjectType = {
@@ -528,6 +686,9 @@ local function init()
 
     Logger.init()
     Logger.info("Log service initialization is complete.")
+
+    PlayerMetaInfo.init()
+    Logger.info("PlayerMetaInfo is loaded.")
 end
 
 init()
