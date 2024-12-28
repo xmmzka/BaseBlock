@@ -1,13 +1,30 @@
+--[[
+    File: BaseBlock.lua
+    Description: Lua framework to simplify Eggy code API calls.
+    Author: circute
+    Date: 2024-12-23
+    Version: 0.0.1_20241228-Alpha
+]]
+
+
+---@module "BaseBlock"
 local BaseBlock = {
-    VERSION = "0.0.1_20241226-Beta",
+    VERSION = "0.0.1_20241228-Alpha",
     LOGICAL_FRAME_RATE = 30,
     LOGICAL_FRAME_INTERVAL = 0.033333333
 }
 
 
---- @class Util
+---@class Util
 local Util = {}
+
+---@param table table
+---@param elem any
+---@return number|nil
 function Util.indexOf(table, elem)
+    if elem == nil then
+        return nil
+    end
     for index, value in ipairs(table) do
         if value == elem then
             return index
@@ -16,9 +33,36 @@ function Util.indexOf(table, elem)
     return nil
 end
 
+-- function Util.copy(obj, copyCache)
+--     if type(obj) ~= "table" then
+--         return obj
+--     end
+
+--     if copyCache and copyCache[obj] then
+--         return copyCache[obj]
+--     end
+
+--     local copy = {}
+--     copyCache = copyCache or {}
+--     copyCache[obj] = copy
+
+--     for key, value in pairs(obj) do
+--         copy[Util.copy(key, copyCache)] = Util.copy(value, copyCache)
+--     end
+
+--     return copy
+-- end
+
+
 -- Do not return this class.
---- @class UpdateSequence
-local UpdateSequence = {
+---@class FrameMetaData
+---@field framCount number
+---@field frameworkFixedUpdateSequence table
+---@field frameworkLateUpdateSequence table
+---@field fixedUpdateSequence table
+---@field lateUpdateSequence table
+local FrameMetaData = {
+    frameCount = 0,
     frameworkFixedUpdateSequence = {},
     frameworkLateUpdateSequence = {},
     fixedUpdateSequence = {},
@@ -26,39 +70,44 @@ local UpdateSequence = {
 }
 
 
-function UpdateSequence.preHandlerWrapper()
-    for key, value in pairs(UpdateSequence.frameworkFixedUpdateSequence) do
+function FrameMetaData.preHandlerWrapper()
+    FrameMetaData.frameCount = FrameMetaData.frameCount + 1
+    for key, value in pairs(FrameMetaData.frameworkFixedUpdateSequence) do
         value()
     end
-    for key, value in pairs(UpdateSequence.fixedUpdateSequence) do
-        value()
-    end
-end
-
-function UpdateSequence.lateHandlerWrapper()
-    for key, value in pairs(UpdateSequence.frameworkLateUpdateSequence) do
-        value()
-    end
-    for key, value in pairs(UpdateSequence.lateUpdateSequence) do
+    for key, value in pairs(FrameMetaData.fixedUpdateSequence) do
         value()
     end
 end
 
-function UpdateSequence.init()
-    LuaAPI.set_tick_handler(UpdateSequence.preHandlerWrapper, UpdateSequence.lateHandlerWrapper)
+function FrameMetaData.lateHandlerWrapper()
+    for key, value in pairs(FrameMetaData.frameworkLateUpdateSequence) do
+        value()
+    end
+    for key, value in pairs(FrameMetaData.lateUpdateSequence) do
+        value()
+    end
 end
 
---- @class Update
-local Update = {}
-function Update.getFixedUpdateFunctionSequence()
-    return UpdateSequence.fixedUpdateSequence
+function FrameMetaData.init()
+    LuaAPI.set_tick_handler(FrameMetaData.preHandlerWrapper, FrameMetaData.lateHandlerWrapper)
 end
 
-function Update.getLateUpdateFunctionSequence()
-    return UpdateSequence.lateUpdateSequence
+---@class Frame
+local Frame = {}
+function Frame.getFixedUpdateFunctionSequence()
+    return FrameMetaData.fixedUpdateSequence
 end
 
---- @enum LogLevel
+function Frame.getLateUpdateFunctionSequence()
+    return FrameMetaData.lateUpdateSequence
+end
+
+function Frame.getFrameCount()
+    return FrameMetaData.frameCount
+end
+
+---@enum LogLevel
 local LogLevel = {
     DEBUG = 1,
     INFO = 2,
@@ -67,10 +116,9 @@ local LogLevel = {
     FATAL = 5
 }
 
---- @class Logger
---- @field minLogLevel LogLevel
---- @field logTimeFrameCount any
---- @field initialized boolean
+---@class Logger
+---@field minLogLevel LogLevel
+---@field initialized boolean
 local Logger = {
     minLogLevel = LogLevel.DEBUG,
     ---@enum LogLevelNames
@@ -80,33 +128,20 @@ local Logger = {
         [LogLevel.WARN] = "W",
         [LogLevel.ERROR] = "E",
         [LogLevel.FATAL] = "F"
-    },
-    logTimeFrameCount = "WAITING INIT",
-    initialized = false
+    }
 }
-function Logger.init()
-    if Logger.initialized then
-        Logger.error("Logger has been initialized.")
-        return
-    end
-    Logger.initialized = true
-    Logger.logTimeFrameCount = 0
-    UpdateSequence.frameworkFixedUpdateSequence.loggerTimer = function()
-        Logger.logTimeFrameCount = Logger.logTimeFrameCount + 1
-    end
-end
 
+---@param minLogLevel LogLevel
 function Logger.setLogLevel(minLogLevel)
     Logger.minLogLevel = minLogLevel or LogLevel.DEBUG
 end
 
+---@param level LogLevel
+---@param message string
 function Logger.log(level, message)
     if level >= Logger.minLogLevel then
         local levelName = Logger.LogLevelNames[level]
-        local logTime = Logger.logTimeFrameCount
-        if Logger.initialized then
-            logTime = Logger.logTimeFrameCount / BaseBlock.LOGICAL_FRAME_RATE
-        end
+        local logTime = Frame.getFrameCount() / BaseBlock.LOGICAL_FRAME_RATE
         if level <= LogLevel.INFO then
             print(string.format("[ %s ] [ %s ] %s", logTime, levelName, message))
         elseif level == LogLevel.WARN then
@@ -119,32 +154,41 @@ function Logger.log(level, message)
     end
 end
 
+---@param message string
 function Logger.debug(message)
     Logger.log(LogLevel.DEBUG, message)
 end
 
+---@param message string
 function Logger.info(message)
     Logger.log(LogLevel.INFO, message)
 end
 
+---@param message string
 function Logger.warn(message)
     Logger.log(LogLevel.WARN, message)
 end
 
+---@param message string
 function Logger.error(message)
     Logger.log(LogLevel.ERROR, message)
 end
 
+---@param message string
 function Logger.fatal(message)
     Logger.log(LogLevel.FATAL, message)
 end
 
+---@return string
 function Logger.getMinLogLevelName()
     return Logger.LogLevelNames[Logger.minLogLevel]
 end
 
---- @class Hash
+---@class Hash
 local Hash = {}
+
+---@param input any
+---@return string|nil
 function Hash.toString(input)
     if type(input) == "string" then
         return input
@@ -158,11 +202,17 @@ function Hash.toString(input)
         return str
     else
         Logger.error("Unsupported type: " .. type(input))
+        return nil
     end
 end
 
+---@param input any
+---@return integer|nil
 function Hash.fastHash(input)
     local str = Hash.toString(input)
+    if str == nil then
+        return nil
+    end
     local hash = 0x811C9DC5
     local prime = 0x01000193
 
@@ -173,7 +223,12 @@ function Hash.fastHash(input)
     return hash
 end
 
---- @class Test
+---@class Test
+---@field functionNum number
+---@field functionList table
+---@field result table
+---@field success number
+---@field failures number
 local Test = {
     functionNum = 0,
     functionList = {},
@@ -181,6 +236,7 @@ local Test = {
     success = 0,
     failures = 0
 }
+
 function Test.init()
     Logger.info("Initialize unit test.")
 
@@ -224,12 +280,11 @@ function Test.test()
 end
 
 function Test.output()
-    local consoleOutputHead = "[ UNIT TEST ]\nTimestamp: %s\nPass: %s\nFailures: %s\n\n"
-    local body = "function: %s >>>>>>>>>>\ninfo: %s\n\n"
+    local consoleOutputHead = string.format("[ UNIT TEST ]\nTimestamp: %s\nSuccess: %s\nFailures: %s\n\n", Frame.getFrameCount(), Test.success, Test.failures)
     local consoleOutputBody = ""
     for key, value in pairs(Test.result) do
         if value.status ~= true then
-            consoleOutputBody = consoleOutputBody .. string.format(body, value.status, value.result)
+            consoleOutputBody = consoleOutputBody .. string.format("function: %s >>>>>>>>>>\ninfo: %s\n\n", key, value.result)
         end
     end
     local consoleOutputTail = ""
@@ -241,16 +296,18 @@ function Test.output()
     print(consoleOutputHead .. consoleOutputBody .. consoleOutputTail)
 end
 
+---@param expected any
+---@param actual any
 function Test.Assert(expected, actual)
     if expected ~= actual then
         error("Assert Failed! expected: " .. expected .. ", actual: " .. actual)
     end
 end
 
---- @class Vector
---- @field x number
---- @field y number
---- @field z number
+---@class Vector
+---@field x number
+---@field y number
+---@field z number
 local Vector = {}
 Vector.__index = Vector
 function Vector.new(x, y, z)
@@ -265,10 +322,15 @@ function Vector.new(x, y, z)
     return self
 end
 
-function Vector.fromProtoVector()
-
+---@diagnostic disable-next-line: undefined-doc-name
+---@param vector3 Vector3
+---@return Vector|nil
+function Vector.fromProtoVector(vector3)
+---@diagnostic disable-next-line: undefined-field
+    return Vector.new(vector3.x, vector3.y, vector3.z)
 end
 
+---@return Vector3
 function Vector:toProtoVector()
     ---@diagnostic disable-next-line: param-type-mismatch
     return GlobalAPI.vector3(self.x, self.y, self.z)
@@ -320,9 +382,9 @@ function Vector:__tostring()
 end
 
 --- 随机数生成器类
---- @class Random
---- @field seed number
---- @field state number
+---@class Random
+---@field seed number
+---@field state number
 local Random = {}
 Random.__index = Random
 
@@ -355,15 +417,15 @@ function Random:nextFloat()
     return self:nextInt() / 2 ^ 32
 end
 
---- @class Timer
---- @field interval number
---- @field count number
---- @field currentCount number
---- @field immediate boolean
---- @field task function
---- @field enabled boolean
---- @field destroyed boolean
---- @field wrappedCallback function
+---@class Timer
+---@field interval number
+---@field count number
+---@field currentCount number
+---@field immediate boolean
+---@field task function
+---@field enabled boolean
+---@field destroyed boolean
+---@field wrappedCallback function
 local Timer = {
     interval = 1.0,
     count = 1,
@@ -424,15 +486,15 @@ function Timer:destroy()
     self.destroyed = true
 end
 
---- @class FrameTimer
---- @field intervalFrames number
---- @field count number
---- @field currentCount number
---- @field immediate boolean
---- @field task function
---- @field enabled boolean
---- @field destroyed boolean
---- @field wrappedCallback function
+---@class FrameTimer
+---@field intervalFrames number
+---@field count number
+---@field currentCount number
+---@field immediate boolean
+---@field task function
+---@field enabled boolean
+---@field destroyed boolean
+---@field wrappedCallback function
 local FrameTimer = {
     intervalFrames = 1,
     count = 1,
@@ -494,7 +556,7 @@ function FrameTimer:destroy()
 end
 
 -- Do not return this class
---- @class PlayerMetaInfo
+---@class PlayerMetaInfo
 local PlayerMetaInfo = {
     -- 进入游戏的初始玩家数
     originalPlayerNum = 0,
@@ -540,19 +602,17 @@ function PlayerMetaInfo.init()
             if PlayerMetaInfo.campPlayerGroupList["unknown"] == nil then
                 PlayerMetaInfo.campPlayerGroupList["unknown"] = {}
             end
-            table.insert(PlayerMetaInfo.campPlayerGroupList["unknown"],
-                Util.indexOf(PlayerMetaInfo.globalProtoPlayerList(player)))
+            table.insert(PlayerMetaInfo.campPlayerGroupList["unknown"], Util.indexOf(PlayerMetaInfo.globalProtoPlayerList(player)))
         else
             if PlayerMetaInfo.campPlayerGroupList[campID] == nil then
                 PlayerMetaInfo.campPlayerGroupList[campID] = {}
             end
-            table.insert(PlayerMetaInfo.campPlayerGroupList[campID],
-                Util.indexOf(PlayerMetaInfo.globalProtoPlayerList, player))
+            table.insert(PlayerMetaInfo.campPlayerGroupList[campID], Util.indexOf(PlayerMetaInfo.globalProtoPlayerList, player))
         end
     end
 end
 
---- @class PlayerManager
+---@class PlayerManager
 local PlayerManager = {}
 
 function PlayerManager.getPlayerIndexByProto(player)
@@ -566,6 +626,9 @@ function PlayerManager.getPlayerIndexByProto(player)
 end
 
 function PlayerManager.getProtoPlayerByIndex(playerIndex)
+    if playerIndex == nil then
+        return nil
+    end
     if playerIndex > PlayerMetaInfo.originalPlayerNum then
         Logger.error("The player index for the query does not exist.")
         return nil
@@ -590,7 +653,7 @@ function PlayerManager.getPlayerNameByIndex(playerIndex)
     end
 end
 
---- @enum ObjectType
+---@enum ObjectType
 local ObjectType = {
     COMPONENT = 0,
     TRIGGER = 1,
@@ -600,14 +663,14 @@ local ObjectType = {
 
 
 
---- @class ObjectRaw
---- @field presetID number
---- @field objectType ObjectType
---- @field position Vector
---- @field rotation Vector
---- @field scale Vector
---- @field player any
---- @field effectOffset Vector
+---@class ObjectRaw
+---@field presetID number
+---@field objectType ObjectType
+---@field position Vector
+---@field rotation Vector
+---@field scale Vector
+---@field playerIndex number
+---@field effectOffset Vector
 local ObjectRaw = {}
 ObjectRaw.__index = ObjectRaw
 function ObjectRaw.new()
@@ -615,9 +678,9 @@ function ObjectRaw.new()
     return self
 end
 
---- @class Object
---- @field raw ObjectRaw
---- @field protoInstance Unit
+---@class Object
+---@field raw ObjectRaw
+---@field protoInstance Unit
 local Object = {}
 Object.__index = Object
 function Object.new(objectRaw, objectInstance)
@@ -635,61 +698,116 @@ function Object:getObjectPosition()
     local retVector = Vector.new()
 end
 
--- GameAPI.create_obstacle(_u_key, _pos, _rotation, _scale, _role)
---- @class Generator
+-- Do not return this class
+---@class GeneratorCore
+local GeneratorCore = {}
+
+
+---@class Generator
 local Generator = {}
---- @param presetID number
---- @param position Vector
---- @param rotation Vector
---- @param scale Vector
-function Generator.createComponent(presetID, position, rotation, scale, player)
-    --- @diagnostic disable-next-line: param-type-mismatch
-    return GameAPI.create_obstacle(presetID, position:toProtoVector(), rotation:toQuaternion(), scale:toProtoVector(),
-        player)
-end
 
-function Generator.createTriggerSpace(presetID, position, rotation, scale, player)
-    --- @diagnostic disable-next-line: param-type-mismatch
-    return GameAPI.create_customtriggerspace(presetID, position:toProtoVector(), rotation:toQuaternion(),
-        scale:toProtoVector(), player)
-end
-
-function Generator.createLogicSpace(presetID, position, rotation, scale, player)
-    --- @diagnostic disable-next-line: param-type-mismatch
-    return GameAPI.create_triggerspace(presetID, position:toProtoVector(), rotation:toQuaternion(), scale:toProtoVector(),
-        player)
-end
-
-function Generator.createEffect(presetID, position, rotation, scale, modelSocket, player)
-    if modelSocket then
-        GameAPI.create_sfx_with_socket_offset()
+--- 此函数为API的封装，可以直接
+---@param presetID number
+---@param position Vector
+---@param rotation Vector
+---@param scale Vector
+function Generator.createComponent(presetID, position, rotation, scale, playerIndex)
+    local protoPlayer = PlayerManager.getProtoPlayerByIndex(playerIndex)
+    if protoPlayer == nil then
+        Logger.warn("The playerIndex does not exist, use nil instead.")
     end
+    ---@diagnostic disable-next-line: param-type-mismatch
+    return GameAPI.create_obstacle(presetID, position:toProtoVector(), rotation:toQuaternion(), scale:toProtoVector(), protoPlayer)
 end
 
---- @param objectRaw ObjectRaw
+function Generator.createTriggerSpace(presetID, position, rotation, scale, playerIndex)
+    local protoPlayer = PlayerManager.getProtoPlayerByIndex(playerIndex)
+    if protoPlayer == nil then
+        Logger.warn("The playerIndex does not exist, use nil instead.")
+    end
+    ---@diagnostic disable-next-line: param-type-mismatch
+    return GameAPI.create_customtriggerspace(presetID, position:toProtoVector(), rotation:toQuaternion(), scale:toProtoVector(), protoPlayer)
+end
+
+function Generator.createLogicSpace(presetID, position, rotation, scale, playerIndex)
+    local protoPlayer = PlayerManager.getProtoPlayerByIndex(playerIndex)
+    if protoPlayer == nil then
+        Logger.warn("The playerIndex does not exist, use nil instead.")
+    end
+    ---@diagnostic disable-next-line: param-type-mismatch
+    return GameAPI.create_triggerspace(presetID, position:toProtoVector(), rotation:toQuaternion(), scale:toProtoVector(), protoPlayer)
+end
+
+---@param objectRaw ObjectRaw
 function Generator.create(objectRaw)
+    local protoObject = nil
     if objectRaw.objectType == ObjectType.COMPONENT then
-        Generator.createComponent(objectRaw.presetID, objectRaw.position, objectRaw.rotation, objectRaw.scale,
-            objectRaw.player)
+        protoObject = Generator.createComponent(objectRaw.presetID, objectRaw.position, objectRaw.rotation, objectRaw.scale, objectRaw.playerIndex)
+    elseif objectRaw.objectType == ObjectType.TRIGGER then
+        protoObject = Generator.createTriggerSpace(objectRaw.presetID, objectRaw.position, objectRaw.rotation, objectRaw.scale, objectRaw.playerIndex)
+    elseif objectRaw.objectType == ObjectType.LOGIC then
+        protoObject = Generator.createLogicSpace(objectRaw.presetID, objectRaw.position, objectRaw.rotation, objectRaw.scale, objectRaw.playerIndex)
+    elseif objectRaw.objectType == ObjectType.EFFECT then
+        -- TODO: effect
+    else
+        Logger.error("Unknown ObjectType of objectRaw.")
+    end
+
+    if protoObject == nil then
+        return nil
+    else
+        -- TODO
+        return Object.new(protoObject, Util.copy(objectRaw))
     end
 end
+
+-- Framework initialized flag
+-- Do not return this variable
+local frameworkLoaded = false
 
 -- module initialize
 -- Do not return this function.
 local function init()
+    if frameworkLoaded then
+        return
+    end
     local logo = ">> >> >> BASEBLOCK << << <<\n=======================\nVersion: " .. BaseBlock.VERSION
     print(logo)
+
     Logger.info(string.format("The initialization log level is [ %s ]", Logger.getMinLogLevelName()))
 
-    UpdateSequence.init()
+    FrameMetaData.init()
     Logger.info("Initialize queue of the frame update callback function.")
-
-    Logger.init()
-    Logger.info("Log service initialization is complete.")
 
     PlayerMetaInfo.init()
     Logger.info("PlayerMetaInfo is loaded.")
+    -- Must Before test
+    frameworkLoaded = true
+    -- Run test offset: 1.0s
+    Timer.new(1.0, 1, false, function()
+        Test.init()
+        Test.test()
+        Test.output()
+    end):run()
 end
+
+BaseBlock.Test = Test
+BaseBlock.Timer = Timer
+BaseBlock.FrameTimer = FrameTimer
+BaseBlock.Object = Object
+BaseBlock.ObjectRaw = ObjectRaw
+BaseBlock.Logger = Logger
+BaseBlock.Util = Util
+BaseBlock.Generator = Generator
+BaseBlock.Frame = Frame
+BaseBlock.PlayerManager = PlayerManager
+BaseBlock.Random = Random
+BaseBlock.Hash = Hash
+BaseBlock.Vector = Vector
+BaseBlock.LogLevel = LogLevel
+BaseBlock.ObjectType = ObjectType
+
+
 
 init()
 return BaseBlock
