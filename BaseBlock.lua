@@ -33,6 +33,15 @@ function Util.indexOf(table, elem)
     return nil
 end
 
+function Util.contains(table, elem)
+    for index, value in ipairs(table) do
+        if value == elem then
+            return true
+        end
+    end
+    return false
+end
+
 -- function Util.copy(obj, copyCache)
 --     if type(obj) ~= "table" then
 --         return obj
@@ -760,6 +769,62 @@ function Generator.create(objectRaw)
         return Object.new(protoObject, Util.copy(objectRaw))
     end
 end
+
+
+---@class Audio
+local Audio = {
+    ---@enum Tamber
+    Tamber = {
+        PIANO = 0,
+        STRINGS = 1,
+        ACOUSTIC_GUITAR = 2,
+        CLEAN_ELECTRIC_GUITAR = 3,
+        BROKEN_ELECTRIC_GUITAR = 4,
+        DISTORTION_ELECTRIC_GUITAR = 5,
+        ELECTRIC_BASS = 6,
+        BRASS = 7
+    },
+    NoteName = {
+        C = "c",
+        D = "d",
+        E = "e",
+        F = "f",
+        G = "g",
+        A = "a",
+        B = "b"
+    },
+    NoteGroup = {
+        1, 2, 3, 4, 5, 6, 7, 8, 9
+    }
+    
+}
+function Audio.playNote(tamber, pitch, duration)
+    if not Util.contains(Audio.Tamber, tamber)  then
+        Logger.error("Unsupported tamber.")
+        return
+    end
+    if #pitch > 3 then
+        Logger.error("Incorrect pitch string formatting.")
+        return
+    end
+    local noteName = string.sub(pitch, 1, 1)
+    local noteGroup = string.sub(pitch, 2, 2)
+
+    if not Util.contains(Audio.NoteName, noteName) or noteGroup then
+        Logger.error("Incorrect pitch string formatting.")
+    end
+    local offsetEnabled = false
+    if #pitch == 3 then
+        if string.sub(pitch, 3, 3) == "#" then
+            offsetEnabled = true
+        end
+    end
+
+    GameAPI.play_3d_sound_with_params()
+
+end
+
+
 
 -- Framework initialized flag
 -- Do not return this variable
