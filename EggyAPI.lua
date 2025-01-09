@@ -971,6 +971,11 @@ ListSoundID = {}
 ListSoundKey = {}
 
 
+---剧情对话编号列表
+---@class ListStoryKey
+ListStoryKey = {}
+
+
 ---字符串列表
 ---@class ListStr
 ListStr = {}
@@ -1556,6 +1561,11 @@ PoolSoundID = {}
 PoolSoundKey = {}
 
 
+---剧情对话编号权重池
+---@class PoolStoryKey
+PoolStoryKey = {}
+
+
 ---字符串权重池
 ---@class PoolStr
 PoolStr = {}
@@ -1704,6 +1714,11 @@ SoundID = {}
 ---音效编号
 ---@class SoundKey
 SoundKey = {}
+
+
+---剧情对话编号
+---@class StoryKey
+StoryKey = {}
 
 
 ---字符串
@@ -2243,6 +2258,20 @@ end
 function GlobalAPI.fixed_abs(_val)
 end
 
+---开方
+---@param _radicand Fixed 底数
+---@param _radical Fixed 根数
+---@return Fixed
+function GlobalAPI.fixed_extract_root(_radicand, _radical)
+end
+
+---对数
+---@param _exponent Fixed 原数
+---@param _base Fixed 底数
+---@return Fixed
+function GlobalAPI.fixed_logarithm(_exponent, _base)
+end
+
 ---定点数转整数
 ---@param _value Fixed 定点数
 ---@return Int
@@ -2328,6 +2357,40 @@ end
 ---@param _val Int 整数
 ---@return Int
 function GlobalAPI.int_abs(_val)
+end
+
+---组合数
+---@param _total_num Int 总数
+---@param _select_num Int 选取数
+---@return Int
+function GlobalAPI.int_combination(_total_num, _select_num)
+end
+
+---整数阶乘
+---@param _value Int 整数
+---@return Int
+function GlobalAPI.int_factorial(_value)
+end
+
+---最大公约数
+---@param _a Int 整数1
+---@param _b Int 整数2
+---@return Int
+function GlobalAPI.int_gcd(_a, _b)
+end
+
+---最小公倍数
+---@param _a Int 整数1
+---@param _b Int 整数2
+---@return Int
+function GlobalAPI.int_lcm(_a, _b)
+end
+
+---排列数
+---@param _total_num Int 总数
+---@param _select_num Int 选取数
+---@return Int
+function GlobalAPI.int_permutation(_total_num, _select_num)
 end
 
 ---整型转技能槽位(内部)
@@ -3304,6 +3367,12 @@ end
 function GlobalAPI.list_append_soundkey(_list, _element)
 end
 
+---添加列表元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _element StoryKey 元素
+function GlobalAPI.list_append_storykey(_list, _element)
+end
+
 ---添加列表元素(字符串)
 ---@param _list ListStr 字符串列表
 ---@param _element Str 元素
@@ -3875,6 +3944,11 @@ end
 ---列表清空元素(音效编号)
 ---@param _list ListSoundKey 音效编号列表
 function GlobalAPI.list_clear_soundkey(_list)
+end
+
+---列表清空元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+function GlobalAPI.list_clear_storykey(_list)
 end
 
 ---列表清空元素(字符串)
@@ -4523,6 +4597,12 @@ end
 ---@param _list ListSoundKey 原列表
 ---@return ListSoundKey
 function GlobalAPI.list_clone_soundkey(_list)
+end
+
+---列表拷贝(剧情对话编号)
+---@param _list ListStoryKey 原列表
+---@return ListStoryKey
+function GlobalAPI.list_clone_storykey(_list)
 end
 
 ---列表拷贝(字符串)
@@ -5284,6 +5364,13 @@ end
 function GlobalAPI.list_contain_soundkey(_list, _element)
 end
 
+---列表中存在元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _element StoryKey 元素
+---@return Bool
+function GlobalAPI.list_contain_storykey(_list, _element)
+end
+
 ---列表中存在元素(字符串)
 ---@param _list ListStr 字符串列表
 ---@param _element Str 元素
@@ -5989,6 +6076,13 @@ end
 ---@param _element SoundKey 元素
 ---@return Bool
 function GlobalAPI.list_contains_soundkey(_list, _element)
+end
+
+---列表中存在元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _element StoryKey 元素
+---@return Bool
+function GlobalAPI.list_contains_storykey(_list, _element)
 end
 
 ---列表中存在元素(字符串)
@@ -6752,6 +6846,13 @@ end
 ---@param _element SoundKey 元素
 ---@return Int
 function GlobalAPI.list_count_soundkey(_list, _element)
+end
+
+---列表指定元素的数量(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _element StoryKey 元素
+---@return Int
+function GlobalAPI.list_count_storykey(_list, _element)
 end
 
 ---列表指定元素的数量(字符串)
@@ -7531,6 +7632,13 @@ end
 function GlobalAPI.list_get_soundkey(_list, _index)
 end
 
+---列表内取元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _index Int 索引
+---@return StoryKey
+function GlobalAPI.list_get_storykey(_list, _index)
+end
+
 ---列表内取元素(字符串)
 ---@param _list ListStr 字符串列表
 ---@param _index Int 索引
@@ -8306,6 +8414,13 @@ end
 ---@param _v SoundKey 元素
 ---@return Int
 function GlobalAPI.list_index_soundkey(_list, _v)
+end
+
+---列表中指定元素的索引(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _v StoryKey 元素
+---@return Int
+function GlobalAPI.list_index_storykey(_list, _v)
 end
 
 ---列表中指定元素的索引(字符串)
@@ -9085,6 +9200,13 @@ end
 function GlobalAPI.list_insert_soundkey(_list, _index, _element)
 end
 
+---列表插入元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _index Int 索引
+---@param _element StoryKey 元素
+function GlobalAPI.list_insert_storykey(_list, _index, _element)
+end
+
 ---列表插入元素(字符串)
 ---@param _list ListStr 字符串列表
 ---@param _index Int 索引
@@ -9767,6 +9889,12 @@ end
 ---@param _list ListSoundKey 音效编号列表
 ---@param _index Int 索引
 function GlobalAPI.list_pop_soundkey(_list, _index)
+end
+
+---列表移除指定索引的元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _index Int 索引
+function GlobalAPI.list_pop_storykey(_list, _index)
 end
 
 ---列表移除指定索引的元素(字符串)
@@ -10516,6 +10644,11 @@ end
 function GlobalAPI.list_remove_duplicate_soundkey(_list)
 end
 
+---列表移除所有重复元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+function GlobalAPI.list_remove_duplicate_storykey(_list)
+end
+
 ---列表移除所有重复元素(字符串)
 ---@param _list ListStr 字符串列表
 function GlobalAPI.list_remove_duplicate_str(_list)
@@ -10988,6 +11121,12 @@ end
 ---@param _list ListSoundKey 音效编号列表
 ---@param _element SoundKey 元素
 function GlobalAPI.list_remove_soundkey(_list, _element)
+end
+
+---列表移除某个元素的第一个匹配项(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _element StoryKey 元素
+function GlobalAPI.list_remove_storykey(_list, _element)
 end
 
 ---列表移除某个元素的第一个匹配项(字符串)
@@ -11747,6 +11886,13 @@ end
 ---@param _index Int 索引
 ---@param _element SoundKey 元素
 function GlobalAPI.list_set_soundkey(_list, _index, _element)
+end
+
+---设置列表元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _index Int 索引
+---@param _element StoryKey 元素
+function GlobalAPI.list_set_storykey(_list, _index, _element)
 end
 
 ---设置列表元素(字符串)
@@ -12619,6 +12765,14 @@ end
 function GlobalAPI.list_slice_soundkey(_list, _start_index, _end_index)
 end
 
+---列表切片(剧情对话编号)
+---@param _list ListStoryKey 原列表
+---@param _start_index Int 起始索引
+---@param _end_index Int 结束索引
+---@return ListStoryKey
+function GlobalAPI.list_slice_storykey(_list, _start_index, _end_index)
+end
+
 ---列表切片(字符串)
 ---@param _list ListStr 原列表
 ---@param _start_index Int 起始索引
@@ -13313,6 +13467,12 @@ end
 ---@param _val ListSoundKey 音效编号列表
 ---@return Str
 function GlobalAPI.listsoundkey_to_str(_val)
+end
+
+---剧情对话编号列表转字符串
+---@param _val ListStoryKey 剧情对话编号列表
+---@return Str
+function GlobalAPI.liststorykey_to_str(_val)
 end
 
 ---字符串列表转字符串
@@ -14091,6 +14251,13 @@ end
 function GlobalAPI.pool_add_soundkey(_pool, _element, _weight)
 end
 
+---权重池添加指定元素权重(剧情对话编号)
+---@param _pool PoolStoryKey 池
+---@param _element StoryKey 元素
+---@param _weight Int 权重
+function GlobalAPI.pool_add_storykey(_pool, _element, _weight)
+end
+
 ---权重池添加指定元素权重(字符串)
 ---@param _pool PoolStr 池
 ---@param _element Str 元素
@@ -14706,6 +14873,12 @@ end
 function GlobalAPI.pool_remove_soundkey(_pool, _element)
 end
 
+---权重池移除指定元素(剧情对话编号)
+---@param _pool PoolStoryKey 池
+---@param _element StoryKey 元素
+function GlobalAPI.pool_remove_storykey(_pool, _element)
+end
+
 ---权重池移除指定元素(字符串)
 ---@param _pool PoolStr 池
 ---@param _element Str 元素
@@ -15027,6 +15200,12 @@ end
 ---@param _val SoundKey 音效编号
 ---@return Str
 function GlobalAPI.soundkey_to_str(_val)
+end
+
+---剧情对话编号转字符串
+---@param _val StoryKey 剧情对话编号
+---@return Str
+function GlobalAPI.storykey_to_str(_val)
 end
 
 ---是否含有子字符串
@@ -16162,6 +16341,12 @@ end
 function Actor.get_attr_soundkey(_key)
 end
 
+---获取属性(剧情对话编号)
+---@param _key Str 属性名
+---@return StoryKey
+function Actor.get_attr_storykey(_key)
+end
+
 ---获取属性(字符串)
 ---@param _key Str 属性名
 ---@return Str
@@ -17103,6 +17288,12 @@ end
 function Actor.get_kv_listsoundkey(_key)
 end
 
+---获取自定义值(剧情对话编号列表)
+---@param _key Str 名称
+---@return ListStoryKey
+function Actor.get_kv_liststorykey(_key)
+end
+
 ---获取自定义值(字符串列表)
 ---@param _key Str 名称
 ---@return ListStr
@@ -17353,6 +17544,12 @@ end
 ---@param _key Str 名称
 ---@return SoundKey
 function Actor.get_kv_soundkey(_key)
+end
+
+---获取自定义值(剧情对话编号)
+---@param _key Str 名称
+---@return StoryKey
+function Actor.get_kv_storykey(_key)
 end
 
 ---获取自定义值(字符串)
@@ -18332,6 +18529,12 @@ end
 function Actor.set_kv_listsoundkey(_key, _val)
 end
 
+---设置自定义值(剧情对话编号列表)
+---@param _key Str 名称
+---@param _val ListStoryKey 自定义值
+function Actor.set_kv_liststorykey(_key, _val)
+end
+
 ---设置自定义值(字符串列表)
 ---@param _key Str 名称
 ---@param _val ListStr 自定义值
@@ -18582,6 +18785,12 @@ end
 ---@param _key Str 名称
 ---@param _val SoundKey 自定义值
 function Actor.set_kv_soundkey(_key, _val)
+end
+
+---设置自定义值(剧情对话编号)
+---@param _key Str 名称
+---@param _val StoryKey 自定义值
+function Actor.set_kv_storykey(_key, _val)
 end
 
 ---设置自定义值(字符串)
@@ -19303,6 +19512,12 @@ end
 function AttrComp.get_attr_soundkey(_key)
 end
 
+---获取属性(剧情对话编号)
+---@param _key Str 属性名
+---@return StoryKey
+function AttrComp.get_attr_storykey(_key)
+end
+
 ---获取属性(字符串)
 ---@param _key Str 属性名
 ---@return Str
@@ -19993,6 +20208,12 @@ end
 function AttrComp.set_attr_soundkey(_key, _val)
 end
 
+---设置属性(剧情对话编号)
+---@param _key Str 属性名
+---@param _val StoryKey 属性值
+function AttrComp.set_attr_storykey(_key, _val)
+end
+
 ---设置属性(字符串)
 ---@param _key Str 属性名
 ---@param _val Str 属性值
@@ -20217,10 +20438,6 @@ end
 ---@param _inherit_scale Bool 是否继承缩放
 ---@param _inherit_capsule_size Bool 是否继承胶囊体
 function Character.change_model_by_creature_key(_creature_key, _include_ugc_model, _inherit_scale, _inherit_capsule_size)
-end
-
----命令角色跳跃
-function Character.cmd_jump()
 end
 
 ---命令角色抓举
@@ -21908,6 +22125,13 @@ end
 function GameAPI.ability_prefab_get_kv_listsoundkey(_key, _prop)
 end
 
+---获取技能预设的自定义值(剧情对话编号列表)
+---@param _key AbilityKey 技能编号
+---@param _prop Str 名称
+---@return ListStoryKey
+function GameAPI.ability_prefab_get_kv_liststorykey(_key, _prop)
+end
+
 ---获取技能预设的自定义值(字符串列表)
 ---@param _key AbilityKey 技能编号
 ---@param _prop Str 名称
@@ -22237,6 +22461,13 @@ end
 function GameAPI.ability_prefab_get_kv_soundkey(_key, _prop)
 end
 
+---获取技能预设的自定义值(剧情对话编号)
+---@param _key AbilityKey 技能编号
+---@param _prop Str 名称
+---@return StoryKey
+function GameAPI.ability_prefab_get_kv_storykey(_key, _prop)
+end
+
 ---获取技能预设的自定义值(字符串)
 ---@param _key AbilityKey 技能编号
 ---@param _prop Str 名称
@@ -22504,6 +22735,16 @@ end
 function GameAPI.create_creature_optional_fashion(_u_key, _pos, _rotation, _scale, _role, _fashion_id)
 end
 
+---创建一个生物
+---@param _u_key CreatureKey 单位编号
+---@param _pos Point3 位置
+---@param _role Role 所属玩家
+---@param _kv_args Dict 自定义参数值
+---@param _kv_types Dict 自定义参数类型
+---@return Creature
+function GameAPI.create_creature_with_args(_u_key, _pos, _role, _kv_args, _kv_types)
+end
+
 ---创建一个触发区域
 ---@param _u_key CustomTriggerSpaceKey 触发区域编号
 ---@param _pos Vector3 位置
@@ -22512,6 +22753,16 @@ end
 ---@param _role Role 所属玩家
 ---@return CustomTriggerSpace
 function GameAPI.create_customtriggerspace(_u_key, _pos, _rotation, _scale, _role)
+end
+
+---创建一个触发区域
+---@param _u_key CustomTriggerSpaceKey 单位编号
+---@param _pos Point3 位置
+---@param _role Role 所属玩家
+---@param _kv_args Dict 自定义参数值
+---@param _kv_types Dict 自定义参数类型
+---@return CustomTriggerSpace
+function GameAPI.create_customtriggerspace_with_args(_u_key, _pos, _role, _kv_args, _kv_types)
 end
 
 ---创建一个装饰物
@@ -22551,6 +22802,16 @@ end
 function GameAPI.create_life_entity(_unit_key, _pos, _rotation, _scale_ratio, _role)
 end
 
+---创建一个生命体
+---@param _u_key CreatureKey 单位编号
+---@param _pos Point3 位置
+---@param _role Role 所属玩家
+---@param _kv_args Dict 自定义参数值
+---@param _kv_types Dict 自定义参数类型
+---@return Creature
+function GameAPI.create_lifeentity_with_args(_u_key, _pos, _role, _kv_args, _kv_types)
+end
+
 ---创建连线特效
 ---@param _path Str 字符串
 ---@param _unit Unit 起点单位
@@ -22570,6 +22831,16 @@ end
 ---@param _role Role 所属玩家
 ---@return Obstacle
 function GameAPI.create_obstacle(_u_key, _pos, _rotation, _scale, _role)
+end
+
+---创建一个组件
+---@param _u_key UnitKey 单位编号
+---@param _pos Point3 位置
+---@param _role Role 所属玩家
+---@param _kv_args Dict 自定义参数值
+---@param _kv_types Dict 自定义参数类型
+---@return Obstacle
+function GameAPI.create_obstacle_with_args(_u_key, _pos, _role, _kv_args, _kv_types)
 end
 
 ---播放特效
@@ -22616,6 +22887,16 @@ end
 ---@param _role Role 所属玩家
 ---@return TriggerSpace
 function GameAPI.create_triggerspace(_u_key, _pos, _rotation, _scale, _role)
+end
+
+---创建一个逻辑体
+---@param _u_key TriggerSpaceKey 单位编号
+---@param _pos Point3 位置
+---@param _role Role 所属玩家
+---@param _kv_args Dict 自定义参数值
+---@param _kv_types Dict 自定义参数类型
+---@return TriggerSpace
+function GameAPI.create_triggerspace_with_args(_u_key, _pos, _role, _kv_args, _kv_types)
 end
 
 ---创建一个单位
@@ -23713,6 +23994,13 @@ end
 function GameAPI.creature_prefab_get_kv_listsoundkey(_key, _prop)
 end
 
+---获取生物预设的自定义值(剧情对话编号列表)
+---@param _key CreatureKey 生物编号
+---@param _prop Str 名称
+---@return ListStoryKey
+function GameAPI.creature_prefab_get_kv_liststorykey(_key, _prop)
+end
+
 ---获取生物预设的自定义值(字符串列表)
 ---@param _key CreatureKey 生物编号
 ---@param _prop Str 名称
@@ -24040,6 +24328,13 @@ end
 ---@param _prop Str 名称
 ---@return SoundKey
 function GameAPI.creature_prefab_get_kv_soundkey(_key, _prop)
+end
+
+---获取生物预设的自定义值(剧情对话编号)
+---@param _key CreatureKey 生物编号
+---@param _prop Str 名称
+---@return StoryKey
+function GameAPI.creature_prefab_get_kv_storykey(_key, _prop)
 end
 
 ---获取生物预设的自定义值(字符串)
@@ -25258,6 +25553,13 @@ end
 function GameAPI.customtriggerspace_prefab_get_kv_listsoundkey(_key, _prop)
 end
 
+---获取触发区域预设的自定义值(剧情对话编号列表)
+---@param _key CustomTriggerSpaceKey 逻辑体编号
+---@param _prop Str 名称
+---@return ListStoryKey
+function GameAPI.customtriggerspace_prefab_get_kv_liststorykey(_key, _prop)
+end
+
 ---获取触发区域预设的自定义值(字符串列表)
 ---@param _key CustomTriggerSpaceKey 逻辑体编号
 ---@param _prop Str 名称
@@ -25585,6 +25887,13 @@ end
 ---@param _prop Str 名称
 ---@return SoundKey
 function GameAPI.customtriggerspace_prefab_get_kv_soundkey(_key, _prop)
+end
+
+---获取触发区域预设的自定义值(剧情对话编号)
+---@param _key CustomTriggerSpaceKey 逻辑体编号
+---@param _prop Str 名称
+---@return StoryKey
+function GameAPI.customtriggerspace_prefab_get_kv_storykey(_key, _prop)
 end
 
 ---获取触发区域预设的自定义值(字符串)
@@ -27504,6 +27813,14 @@ end
 function GameAPI.get_table_config_listsoundkey(_table_id, _key1, _key2)
 end
 
+---获取多维表剧情对话编号列表值
+---@param _table_id KvTable 表格
+---@param _key1 Str 行索引
+---@param _key2 Str 列索引
+---@return ListStoryKey
+function GameAPI.get_table_config_liststorykey(_table_id, _key1, _key2)
+end
+
 ---获取多维表字符串列表值
 ---@param _table_id KvTable 表格
 ---@param _key1 Str 行索引
@@ -27878,6 +28195,14 @@ end
 ---@param _key2 Str 列索引
 ---@return SoundKey
 function GameAPI.get_table_config_soundkey(_table_id, _key1, _key2)
+end
+
+---获取多维表剧情对话编号值
+---@param _table_id KvTable 表格
+---@param _key1 Str 行索引
+---@param _key2 Str 列索引
+---@return StoryKey
+function GameAPI.get_table_config_storykey(_table_id, _key1, _key2)
 end
 
 ---获取多维表字符串值
@@ -29102,6 +29427,13 @@ end
 function GameAPI.get_table_kv_listsoundkey(_table_id, _key)
 end
 
+---获取一维表剧情对话编号列表值
+---@param _table_id KvTable 表格
+---@param _key Str 索引
+---@return ListStoryKey
+function GameAPI.get_table_kv_liststorykey(_table_id, _key)
+end
+
 ---获取一维表字符串列表值
 ---@param _table_id KvTable 表格
 ---@param _key Str 索引
@@ -29429,6 +29761,13 @@ end
 ---@param _key Str 索引
 ---@return SoundKey
 function GameAPI.get_table_kv_soundkey(_table_id, _key)
+end
+
+---获取一维表剧情对话编号值
+---@param _table_id KvTable 表格
+---@param _key Str 索引
+---@return StoryKey
+function GameAPI.get_table_kv_storykey(_table_id, _key)
 end
 
 ---获取一维表字符串值
@@ -30285,6 +30624,12 @@ end
 function GameAPI.list_choice_soundkey(_list)
 end
 
+---列表中随机取一个元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@return StoryKey
+function GameAPI.list_choice_storykey(_list)
+end
+
 ---列表中随机取一个元素(字符串)
 ---@param _list ListStr 字符串列表
 ---@return Str
@@ -31135,6 +31480,14 @@ end
 ---@param _repeat Bool 是否允许重复
 ---@return ListSoundKey
 function GameAPI.list_choices_soundkey(_list, _count, _repeat)
+end
+
+---列表中随机多个元素(剧情对话编号)
+---@param _list ListStoryKey 剧情对话编号列表
+---@param _count Int 数量
+---@param _repeat Bool 是否允许重复
+---@return ListStoryKey
+function GameAPI.list_choices_storykey(_list, _count, _repeat)
 end
 
 ---列表中随机多个元素(字符串)
@@ -32379,6 +32732,13 @@ end
 function GameAPI.modifier_prefab_get_kv_listsoundkey(_key, _prop)
 end
 
+---获取效果预设的自定义值(剧情对话编号列表)
+---@param _key ModifierKey 效果编号
+---@param _prop Str 名称
+---@return ListStoryKey
+function GameAPI.modifier_prefab_get_kv_liststorykey(_key, _prop)
+end
+
 ---获取效果预设的自定义值(字符串列表)
 ---@param _key ModifierKey 效果编号
 ---@param _prop Str 名称
@@ -32706,6 +33066,13 @@ end
 ---@param _prop Str 名称
 ---@return SoundKey
 function GameAPI.modifier_prefab_get_kv_soundkey(_key, _prop)
+end
+
+---获取效果预设的自定义值(剧情对话编号)
+---@param _key ModifierKey 效果编号
+---@param _prop Str 名称
+---@return StoryKey
+function GameAPI.modifier_prefab_get_kv_storykey(_key, _prop)
 end
 
 ---获取效果预设的自定义值(字符串)
@@ -33931,6 +34298,13 @@ end
 function GameAPI.obstacle_prefab_get_kv_listsoundkey(_key, _prop)
 end
 
+---获取组件预设的自定义值(剧情对话编号列表)
+---@param _key ObstacleKey 组件编号
+---@param _prop Str 名称
+---@return ListStoryKey
+function GameAPI.obstacle_prefab_get_kv_liststorykey(_key, _prop)
+end
+
 ---获取组件预设的自定义值(字符串列表)
 ---@param _key ObstacleKey 组件编号
 ---@param _prop Str 名称
@@ -34258,6 +34632,13 @@ end
 ---@param _prop Str 名称
 ---@return SoundKey
 function GameAPI.obstacle_prefab_get_kv_soundkey(_key, _prop)
+end
+
+---获取组件预设的自定义值(剧情对话编号)
+---@param _key ObstacleKey 组件编号
+---@param _prop Str 名称
+---@return StoryKey
+function GameAPI.obstacle_prefab_get_kv_storykey(_key, _prop)
 end
 
 ---获取组件预设的自定义值(字符串)
@@ -34945,6 +35326,12 @@ end
 ---@param _pool PoolSoundKey 权重池
 ---@return SoundKey
 function GameAPI.pool_choice_soundkey(_pool)
+end
+
+---权重池随机一个元素(剧情对话编号)
+---@param _pool PoolStoryKey 权重池
+---@return StoryKey
+function GameAPI.pool_choice_storykey(_pool)
 end
 
 ---权重池随机一个元素(字符串)
@@ -35707,6 +36094,14 @@ end
 function GameAPI.pool_choices_soundkey(_pool, _count, _repeat)
 end
 
+---获取属性(剧情对话编号)
+---@param _pool PoolStoryKey 池
+---@param _count Int 数量
+---@param _repeat Bool 是否允许重复
+---@return ListStoryKey
+function GameAPI.pool_choices_storykey(_pool, _count, _repeat)
+end
+
 ---获取属性(字符串)
 ---@param _pool PoolStr 池
 ---@param _count Int 数量
@@ -35870,6 +36265,60 @@ end
 ---@param _path_id PathID 路径
 ---@param _index Int 路点索引
 function GameAPI.remove_pathpoint(_path_id, _index)
+end
+
+---播放特效并绑定
+---@param _sfx_key SfxKey 特效编号
+---@param _role Role 玩家
+---@param _unit Unit 起点单位
+---@param _socket_name ModelSocket 起点节点
+---@param _offset Vector3 偏移
+---@param _rot Quaternion 旋转
+---@param _scale Fixed 缩放
+---@param _duration Fixed 持续时间
+---@param _bind_type BindType 绑定方式
+---@return SfxID
+function GameAPI.role_create_sfx_with_socket(_sfx_key, _role, _unit, _socket_name, _offset, _rot, _scale, _duration, _bind_type)
+end
+
+---播放特效
+---@param _sfx_key SfxKey 特效编号
+---@param _role Role 玩家
+---@param _pos Point3 位置
+---@param _rot Quaternion 旋转
+---@param _scale Fixed 缩放
+---@param _duration Fixed 持续时间
+---@param _rate Fixed 播放速率
+---@param _with_sound Bool 是否播放音效
+---@return SfxID
+function GameAPI.role_play_sfx_by_key(_sfx_key, _role, _pos, _rot, _scale, _duration, _rate, _with_sound)
+end
+
+---播放特效并绑定
+---@param _sfx_key SfxKey 特效编号
+---@param _role_list ListRole 玩家
+---@param _unit Unit 起点单位
+---@param _socket_name ModelSocket 起点节点
+---@param _offset Vector3 偏移
+---@param _rot Quaternion 旋转
+---@param _scale Fixed 缩放
+---@param _duration Fixed 持续时间
+---@param _bind_type BindType 绑定方式
+---@return SfxID
+function GameAPI.roles_create_sfx_with_socket(_sfx_key, _role_list, _unit, _socket_name, _offset, _rot, _scale, _duration, _bind_type)
+end
+
+---播放特效
+---@param _sfx_key SfxKey 特效编号
+---@param _role_list ListRole 玩家
+---@param _pos Point3 位置
+---@param _rot Quaternion 旋转
+---@param _scale Fixed 缩放
+---@param _duration Fixed 持续时间
+---@param _rate Fixed 播放速率
+---@param _with_sound Bool 是否播放音效
+---@return SfxID
+function GameAPI.roles_play_sfx_by_key(_sfx_key, _role_list, _pos, _rot, _scale, _duration, _rate, _with_sound)
 end
 
 ---发送UI消息
@@ -37134,6 +37583,14 @@ end
 function GameAPI.set_table_config_listsoundkey(_table_id, _key1, _key2, _val)
 end
 
+---设置多维表剧情对话编号列表值
+---@param _table_id KvTable 表格
+---@param _key1 Str 行索引
+---@param _key2 Str 列索引
+---@param _val ListStoryKey 键值
+function GameAPI.set_table_config_liststorykey(_table_id, _key1, _key2, _val)
+end
+
 ---设置多维表字符串列表值
 ---@param _table_id KvTable 表格
 ---@param _key1 Str 行索引
@@ -37508,6 +37965,14 @@ end
 ---@param _key2 Str 列索引
 ---@param _val SoundKey 键值
 function GameAPI.set_table_config_soundkey(_table_id, _key1, _key2, _val)
+end
+
+---设置多维表剧情对话编号值
+---@param _table_id KvTable 表格
+---@param _key1 Str 行索引
+---@param _key2 Str 列索引
+---@param _val StoryKey 键值
+function GameAPI.set_table_config_storykey(_table_id, _key1, _key2, _val)
 end
 
 ---设置多维表字符串值
@@ -38732,6 +39197,13 @@ end
 function GameAPI.set_table_kv_listsoundkey(_table_id, _key, _val)
 end
 
+---设置一维表剧情对话编号列表值
+---@param _table_id KvTable 表格
+---@param _key Str 索引
+---@param _val ListStoryKey 键值
+function GameAPI.set_table_kv_liststorykey(_table_id, _key, _val)
+end
+
 ---设置一维表字符串列表值
 ---@param _table_id KvTable 表格
 ---@param _key Str 索引
@@ -39059,6 +39531,13 @@ end
 ---@param _key Str 索引
 ---@param _val SoundKey 键值
 function GameAPI.set_table_kv_soundkey(_table_id, _key, _val)
+end
+
+---设置一维表剧情对话编号值
+---@param _table_id KvTable 表格
+---@param _key Str 索引
+---@param _val StoryKey 键值
+function GameAPI.set_table_kv_storykey(_table_id, _key, _val)
 end
 
 ---设置一维表字符串值
@@ -40290,6 +40769,13 @@ end
 function GameAPI.triggerspace_prefab_get_kv_listsoundkey(_key, _prop)
 end
 
+---获取逻辑体预设的自定义值(剧情对话编号列表)
+---@param _key TriggerSpaceKey 逻辑体编号
+---@param _prop Str 名称
+---@return ListStoryKey
+function GameAPI.triggerspace_prefab_get_kv_liststorykey(_key, _prop)
+end
+
 ---获取逻辑体预设的自定义值(字符串列表)
 ---@param _key TriggerSpaceKey 逻辑体编号
 ---@param _prop Str 名称
@@ -40617,6 +41103,13 @@ end
 ---@param _prop Str 名称
 ---@return SoundKey
 function GameAPI.triggerspace_prefab_get_kv_soundkey(_key, _prop)
+end
+
+---获取逻辑体预设的自定义值(剧情对话编号)
+---@param _key TriggerSpaceKey 逻辑体编号
+---@param _prop Str 名称
+---@return StoryKey
+function GameAPI.triggerspace_prefab_get_kv_storykey(_key, _prop)
 end
 
 ---获取逻辑体预设的自定义值(字符串)
@@ -41845,6 +42338,12 @@ end
 function KVBase.get_kv_listsoundkey(_key)
 end
 
+---获取自定义值(剧情对话编号列表)
+---@param _key Str 名称
+---@return ListStoryKey
+function KVBase.get_kv_liststorykey(_key)
+end
+
 ---获取自定义值(字符串列表)
 ---@param _key Str 名称
 ---@return ListStr
@@ -42125,6 +42624,12 @@ end
 ---@param _key Str 名称
 ---@return SoundKey
 function KVBase.get_kv_soundkey(_key)
+end
+
+---获取自定义值(剧情对话编号)
+---@param _key Str 名称
+---@return StoryKey
+function KVBase.get_kv_storykey(_key)
 end
 
 ---获取自定义值(字符串)
@@ -43216,6 +43721,12 @@ end
 function KVBase.set_kv_listsoundkey(_key, _val)
 end
 
+---设置自定义值(剧情对话编号列表)
+---@param _key Str 名称
+---@param _val ListStoryKey 自定义值
+function KVBase.set_kv_liststorykey(_key, _val)
+end
+
 ---设置自定义值(字符串列表)
 ---@param _key Str 名称
 ---@param _val ListStr 自定义值
@@ -43496,6 +44007,12 @@ end
 ---@param _key Str 名称
 ---@param _val SoundKey 自定义值
 function KVBase.set_kv_soundkey(_key, _val)
+end
+
+---设置自定义值(剧情对话编号)
+---@param _key Str 名称
+---@param _val StoryKey 自定义值
+function KVBase.set_kv_storykey(_key, _val)
 end
 
 ---设置自定义值(字符串)
@@ -44789,6 +45306,16 @@ end
 function Role.play_montage_by_id(_montage_key, _start_time, _play_to_end, _play_time)
 end
 
+---播放指定剧情动画(新)
+---@param _montage_key MontageKey 剧情动画编号
+---@param _start_time Fixed 起始时间
+---@param _play_to_end Bool 是否播完
+---@param _play_time Fixed 播放时长
+---@param _position_offset Vector3 位置偏移
+---@param _rotation_offset Quaternion 旋转偏移
+function Role.play_montage_with_transform_origin(_montage_key, _start_time, _play_to_end, _play_time, _position_offset, _rotation_offset)
+end
+
 ---播放屏幕特效
 ---@param _sfx_key SfxKey 特效编号
 ---@param _duration Fixed 持续时间
@@ -45158,6 +45685,11 @@ end
 ---@param _duration Fixed 时长
 ---@param _localize Bool 是否多语言转化
 function Role.show_message(_content, _duration, _localize)
+end
+
+---玩家显示指定商品详情界面
+---@param _raw_goods_id UgcGoods 商品
+function Role.show_ugc_good_detail_panel(_raw_goods_id)
 end
 
 ---玩家显示指定商品购买界面
@@ -46668,6 +47200,12 @@ end
 ---@param _key Str 属性名
 ---@param _val SoundKey 属性值
 function Unit.set_attr_soundkey(_key, _val)
+end
+
+---设置属性(剧情对话编号)
+---@param _key Str 属性名
+---@param _val StoryKey 属性值
+function Unit.set_attr_storykey(_key, _val)
 end
 
 ---设置属性(字符串)
