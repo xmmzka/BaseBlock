@@ -9,7 +9,8 @@
 
 local entryPointFileName = "Base.lua"
 local srcDir = "./src/"
-local outputFile = "output.lua"
+local binDir = "./bin/"
+local outputFilePrefixName = "BaseBlock_Eggy"
 local author = "circute"
 local desc = nil
 
@@ -371,6 +372,12 @@ local function extractTableKeys(code)
     return result
 end
 
+local function extractCoreVersion(code)
+    -- 使用模式匹配查找 Core.VERSION 的值
+    local version = code:match("Core%.CORE_VERSION%s*=%s*[\"']([^\"']+)[\"']")
+    return version or "Version not found"
+end
+
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>> 处理逻辑
 -- 读取文件
 local baseCode = readFileToString(srcDir, entryPointFileName)
@@ -452,6 +459,10 @@ for _, value in ipairs(moduleDefineList) do
 end
 
 outputCode = outputCode .. removeHeaderRequireStatements(baseCode)
-if writeStringToFile(outputFile, outputCode) then
+
+local version = extractCoreVersion(readFileToString(srcDir, "Core.lua"))
+
+local fileName = outputFilePrefixName .. "_" .. version .. ".lua"
+if writeStringToFile(binDir .. fileName, outputCode) then
     print("[ OK ] Done.")
 end

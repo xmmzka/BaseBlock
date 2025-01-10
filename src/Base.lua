@@ -7,6 +7,7 @@ local Frame = require("Frame")
 local Test = require("Test")
 local Timer = require("Timer")
 local Util = require("Util")
+local Random = require("Random")
 
 local BaseBlock = {}
 --Load logic
@@ -38,5 +39,6 @@ BaseBlock.Logger = Logger
 BaseBlock.Test = Test
 BaseBlock.Timer = Timer
 BaseBlock.Util = Util
+BaseBlock.Random = Random
 
 return BaseBlock

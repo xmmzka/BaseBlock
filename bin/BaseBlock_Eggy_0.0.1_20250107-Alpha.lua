@@ -2,9 +2,9 @@
 Package Information:
 Author: circute
 Description: No description provided
-Package Time: 2025-01-11 04:12:41
+Package Time: 2025-01-11 05:28:36
 Package Folder: ./src/
-Modules: 10
+Modules: 11
 ]]
 
 -- Modules:
@@ -17,6 +17,7 @@ Modules: 10
 -- Test
 -- Timer
 -- Util
+-- Random
 -- ProtectRequire
 
 local Enums = {}
@@ -28,6 +29,7 @@ local Frame = {}
 local Test = {}
 local Timer = {}
 local Util = {}
+local Random = {}
 local ProtectRequire = {}
 local LogLevel = {
     DISABLE = -1,
@@ -81,47 +83,47 @@ function Core.getFrameTime()
     return Core.frameCount * Core.FRAME_INTERVAL
 end
 function Core.loadTestFunctionList(testName)
-    local nnnen_testMetaData = ProtectRequire.loadModule(testName)
-    if nnnen_testMetaData then
+    local vmffn_testMetaData = ProtectRequire.loadModule(testName)
+    if vmffn_testMetaData then
         Test.testFunctionList = {}
         Test.enableStatusList = {}
-        for key, value in pairs(nnnen_testMetaData) do
+        for key, value in pairs(vmffn_testMetaData) do
             if type(value) == "function" then
                 Test.testFunctionList[key] = value
-                Test.enableStatusList[key] = nnnen_testMetaData[key .. "enabled"] and true
+                Test.enableStatusList[key] = vmffn_testMetaData[key .. "enabled"] and true
             end
         end
     end
 end
 function Core.runTest()
-    local nnnen_success = 0
-    local nnnen_failure = 0
-    local nnnen_total = 0
-    local nnnen_outputCache = {}
+    local vmffn_success = 0
+    local vmffn_failure = 0
+    local vmffn_total = 0
+    local vmffn_outputCache = {}
     for key, value in pairs(Test.testFunctionList) do
         if Test.enableStatusList[key] then
-            nnnen_total = nnnen_total + 1
+            vmffn_total = vmffn_total + 1
             local status, result = pcall(value())
             if status then
-                nnnen_success = nnnen_success + 1
+                vmffn_success = vmffn_success + 1
             else
-                nnnen_failure = nnnen_failure + 1
-                nnnen_outputCache[key] = result
+                vmffn_failure = vmffn_failure + 1
+                vmffn_outputCache[key] = result
             end
         end
     end
-    local nnnen_outputHeader = string.format("UNIT TEST\nframe count: %s\ntotal: %s\nsuccess: %s\nfailure: %s\ntest list address:%s\n\n", Core.frameCount, nnnen_total, nnnen_success, nnnen_failure, Test.testFunctionList)
-    local nnnen_outputBody = ""
-    for key, value in pairs(nnnen_outputCache) do
-        nnnen_outputBody = nnnen_outputBody .. string.format("-> function: %s\n    info:%s\n\n", key, value)
+    local vmffn_outputHeader = string.format("UNIT TEST\nframe count: %s\ntotal: %s\nsuccess: %s\nfailure: %s\ntest list address:%s\n\n", Core.frameCount, vmffn_total, vmffn_success, vmffn_failure, Test.testFunctionList)
+    local vmffn_outputBody = ""
+    for key, value in pairs(vmffn_outputCache) do
+        vmffn_outputBody = vmffn_outputBody .. string.format("-> function: %s\n    info:%s\n\n", key, value)
     end
     local outputTail
-    if nnnen_success == nnnen_total then
+    if vmffn_success == vmffn_total then
         outputTail = "==> SUCCESS"
     else
         outputTail = "==> FAILURE"
     end
-    print(nnnen_outputHeader .. nnnen_outputBody .. outputTail)
+    print(vmffn_outputHeader .. vmffn_outputBody .. outputTail)
 end
 ConfigLoader.config = {
     logLevel = Enums.LogLevel.INFO,
@@ -129,49 +131,49 @@ ConfigLoader.config = {
     runTestFrameOffset = 30
 }
 function ConfigLoader.loadConfig(configName)
-    local esnov_configData = ProtectRequire.loadModule(configName)
-    if not esnov_configData then
+    local mttyq_configData = ProtectRequire.loadModule(configName)
+    if not mttyq_configData then
         return nil
     else
-        local esnov_totalConfigItemCount = 0
-        local esnov_loadedCount = 0
-        local esnov_skipCount = 0
-        for key, value in pairs(esnov_configData) do
-            esnov_totalConfigItemCount = esnov_totalConfigItemCount + 1
+        local mttyq_totalConfigItemCount = 0
+        local mttyq_loadedCount = 0
+        local mttyq_skipCount = 0
+        for key, value in pairs(mttyq_configData) do
+            mttyq_totalConfigItemCount = mttyq_totalConfigItemCount + 1
             if ConfigLoader.config[key] ~= nil and type(ConfigLoader.config[key]) == type(value) then
                 ConfigLoader.config[key] = value
-                esnov_loadedCount = esnov_loadedCount + 1
+                mttyq_loadedCount = mttyq_loadedCount + 1
             else
-                esnov_skipCount = esnov_skipCount + 1
+                mttyq_skipCount = mttyq_skipCount + 1
             end
         end
-        local esnov_result = {
-            total = esnov_totalConfigItemCount,
-            loaded = esnov_loadedCount,
-            skipped = esnov_skipCount,
+        local mttyq_result = {
+            total = mttyq_totalConfigItemCount,
+            loaded = mttyq_loadedCount,
+            skipped = mttyq_skipCount,
         }
-        return esnov_result
+        return mttyq_result
     end
 end
-local function hasyf_getLogLevelName(logLevel)
+local function wikpc_getLogLevelName(logLevel)
     return Util.keyOf(Enums.LogLevel, logLevel)
 end
-local hasyf_lowProtoLogApi = function(message)
+local wikpc_lowProtoLogApi = function(message)
     GlobalAPI.debug(message)
 end
-local hasyf_midProtoLogApi = function(message)
+local wikpc_midProtoLogApi = function(message)
     GlobalAPI.warning(message)
 end
-local hasyf_emgProtoLogApi = function(message)
+local wikpc_emgProtoLogApi = function(message)
     GlobalAPI.error(message)
 end
-local hasyf_logOutputAdapter = {
+local wikpc_logOutputAdapter = {
     [Enums.LogLevel.DISABLE] = nil,
-    [Enums.LogLevel.DEBUG] = hasyf_lowProtoLogApi,
-    [Enums.LogLevel.INFO] = hasyf_lowProtoLogApi,
-    [Enums.LogLevel.WARN] = hasyf_midProtoLogApi,
-    [Enums.LogLevel.ERROR] = hasyf_emgProtoLogApi,
-    [Enums.LogLevel.FATAL] = hasyf_emgProtoLogApi
+    [Enums.LogLevel.DEBUG] = wikpc_lowProtoLogApi,
+    [Enums.LogLevel.INFO] = wikpc_lowProtoLogApi,
+    [Enums.LogLevel.WARN] = wikpc_midProtoLogApi,
+    [Enums.LogLevel.ERROR] = wikpc_emgProtoLogApi,
+    [Enums.LogLevel.FATAL] = wikpc_emgProtoLogApi
 }
 function Logger.getCurrentLogLevel()
     return ConfigLoader.config.logLevel
@@ -185,8 +187,8 @@ function Logger.setCurrentLogLevel(logLevel)
 end
 function Logger.log(logLevel, message)
     if logLevel ~= Enums.LogLevel.DISABLE and logLevel >= Logger.getCurrentLogLevel() then
-        local hasyf_outputString = string.format("[ %s ] @ [ %s ] ==> %s", hasyf_getLogLevelName(logLevel), Core.frameCount, message)
-        hasyf_logOutputAdapter[logLevel](hasyf_outputString)
+        local wikpc_outputString = string.format("[ %s ] @ [ %s ] ==> %s", wikpc_getLogLevelName(logLevel), Core.frameCount, message)
+        wikpc_logOutputAdapter[logLevel](wikpc_outputString)
     end
 end
 function Logger.debug(message)
@@ -352,6 +354,34 @@ function Util.keyOf(table, elem)
     end
     return nil
 end
+Random.seed = 61
+Random.state = 61
+Random.__index = Random
+function Random.new(seed)
+    local self = setmetatable({}, Random)
+    self.seed = seed or 61
+    self.state = self.seed
+    return self
+end
+function Random:nextInt(bound)
+    local wuuih_xstate = self.state
+    wuuih_xstate = wuuih_xstate ~ (wuuih_xstate << 21)
+    wuuih_xstate = wuuih_xstate ~ (wuuih_xstate >> 35)
+    wuuih_xstate = wuuih_xstate ~ (wuuih_xstate << 4)
+    self.state = wuuih_xstate
+    local wuuih_rand = wuuih_xstate * 2685821657736338717 % (2 ^ 32)
+    if bound then
+        return wuuih_rand % bound
+    else
+        return wuuih_rand
+    end
+end
+function Random:nextBoolean()
+    return self:nextInt() % 2 == 0
+end
+function Random:nextFloat()
+    return self:nextInt() / 2 ^ 32
+end
 function ProtectRequire.loadModule(moduleName)
     local status, mod = pcall(require, moduleName)
     if status then
@@ -384,4 +414,5 @@ BaseBlock.Logger = Logger
 BaseBlock.Test = Test
 BaseBlock.Timer = Timer
 BaseBlock.Util = Util
+BaseBlock.Random = Random
 return BaseBlock
