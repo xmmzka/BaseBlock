@@ -7,8 +7,11 @@
     License: GPL-v3
 ]]
 
-local Enums  = require("Enums")
+local Enums = require("Enums")
+local ProtectRequire = require("ProtectRequire")
 
+
+-- Do not return this class
 ---@class ConfigLoader
 local ConfigLoader = {}
 
@@ -19,7 +22,7 @@ ConfigLoader.config = {
 }
 
 function ConfigLoader.loadConfig(configName)
-    local configData = require(configName)
+    local configData = ProtectRequire.loadModule(configName)
     if not configData then
         return nil
     else
@@ -36,11 +39,12 @@ function ConfigLoader.loadConfig(configName)
             end
         end
 
-        return {
-            totalConfigItemCount = totalConfigItemCount,
-            loadedCount = loadedCount,
-            skipCount = skipCount,
+        local result = {
+            total = totalConfigItemCount,
+            loaded = loadedCount,
+            skipped = skipCount,
         }
+        return result
     end
 end
 

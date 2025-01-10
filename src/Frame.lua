@@ -11,6 +11,7 @@ local Core = require("Core")
 
 ---@class Frame
 local Frame = {}
+
 function Frame.getFixedUpdateFunctionSequence()
     return Core.fixedUpdateSequence
 end

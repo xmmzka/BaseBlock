@@ -21,15 +21,15 @@ local function getLogLevelName(logLevel)
 end
 
 local lowProtoLogApi = function(message)
-    GlobalAPI.debug(Str(message))
+    GlobalAPI.debug(message)
 end
 
 local midProtoLogApi = function(message)
-    GlobalAPI.warning(Str(message))
+    GlobalAPI.warning(message)
 end
 
 local emgProtoLogApi = function(message)
-    GlobalAPI.error(Str(message))
+    GlobalAPI.error(message)
 end
 
 -- Do not return this table.

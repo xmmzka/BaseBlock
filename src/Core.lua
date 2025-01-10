@@ -9,6 +9,7 @@
 
 local Test = require("Test")
 local Logger = require("Logger")
+local ProtectRequire = require("ProtectRequire")
 
 -- Do not return this class.
 ---@class Core
@@ -52,6 +53,7 @@ function Core.lateHandlerWrapper()
 end
 
 function Core.init()
+    Core.frameCount = 1
     -- regester frame updater.
     LuaAPI.set_tick_handler(Core.preHandlerWrapper, Core.lateHandlerWrapper)
     Logger.info("Core initialization is complete.")
@@ -62,7 +64,7 @@ function Core.getFrameTime()
 end
 
 function Core.loadTestFunctionList(testName)
-    local testMetaData = require(testName)
+    local testMetaData = ProtectRequire.loadModule(testName)
     if testMetaData then
         Test.testFunctionList = {}
         Test.enableStatusList = {}

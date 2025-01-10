@@ -69,7 +69,7 @@ end
 --- 移除 Lua 模块代码末尾的 return 语句及其返回值的定义
 ---@param code string lua 源代码
 ---@return string 处理后的代码
-local function removeTrailingReturn(code)
+local function removeTrailingReturn(code, removeDefine)
     -- 匹配以 "return" 开头的有效代码行（忽略注释）
     local returnPattern = "^%s*return%s+(.+)$"             -- 捕获返回值部分
     local localVarPattern = "^%s*local%s+([%w_]+)%s*="     -- 匹配局部变量定义
@@ -110,7 +110,7 @@ local function removeTrailingReturn(code)
     end
 
     -- 如果找到 return 变量，删除其局部定义
-    if returnVars then
+    if returnVars and removeDefine then
         local i = 1
         while i <= #lines do
             local trimmedLine = lines[i]:match("^%s*(.-)%s*$") -- 去掉首尾空白
@@ -400,6 +400,16 @@ end
 
 local moduleDefineList = {}
 
+
+-- for index, value in ipairs(moduleList) do
+--     if value == "Enums" then
+--         table.remove(moduleList, index)
+--         table.insert(moduleList, 1, value)
+--         break
+--     end
+-- end
+
+
 for _, value in ipairs(moduleList) do
     print("[ INFO ] Processing Module ==> Current Module: " .. value .. ".")
     local moduleDefine = readFileToString(srcDir, value .. ".lua")
@@ -422,12 +432,18 @@ for _, value in ipairs(moduleList) do
 
     -- 移除模块引用
     moduleDefine = removeHeaderRequireStatements(moduleDefine)
-    -- 移除模块返回语句
-    moduleDefine = removeTrailingReturn(moduleDefine)
 
-    local prefixCache = {}
-    local uniquePrefix = getUniqueRandomString(prefixCache, 5)
-    moduleDefine = addPrefixToLocalVariables(moduleDefine, uniquePrefix, propertyList) .. "\n"
+    -- 移除模块返回语句和模块定义，枚举模块除外
+    moduleDefine = removeTrailingReturn(moduleDefine, true)
+
+    -- 枚举模块处理
+    if value ~= "Enums" then
+        -- 局部变量添加唯一前缀
+        local prefixCache = {}
+        local uniquePrefix = getUniqueRandomString(prefixCache, 5)
+        moduleDefine = addPrefixToLocalVariables(moduleDefine, uniquePrefix, propertyList)
+    end
+    moduleDefine = moduleDefine .. "\n"
     table.insert(moduleDefineList, moduleDefine)
 end
 

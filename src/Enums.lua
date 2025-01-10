@@ -26,7 +26,9 @@ local ObjectType = {
 }
 
 local Enums = {}
+
 Enums.LogLevel = LogLevel
 Enums.ObjectType = ObjectType
+
 
 return Enums
