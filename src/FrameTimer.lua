@@ -1,4 +1,4 @@
-local Logger = require "Logger"
+local Logger = require("Logger")
 
 ---@class FrameTimer
 ---@field intervalFrames number
@@ -9,16 +9,15 @@ local Logger = require "Logger"
 ---@field enabled boolean
 ---@field destroyed boolean
 ---@field wrappedCallback function
-local FrameTimer = {
-    intervalFrames = 1,
-    count = 1,
-    currentCount = 0,
-    immediate = false,
-    task = function() end,
-    enabled = false,
-    destroyed = false,
-    wrappedCallback = function() end
-}
+local FrameTimer = {}
+FrameTimer.intervalFrames = 1
+FrameTimer.count = 1
+FrameTimer.currentCount = 0
+FrameTimer.immediate = false
+FrameTimer.task = function() end
+FrameTimer.enabled = false
+FrameTimer.destroyed = false
+FrameTimer.wrappedCallback = function() end
 FrameTimer.__index = FrameTimer
 
 function FrameTimer.new(intervalFrames, count, immediate, task)

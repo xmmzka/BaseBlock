@@ -20,17 +20,16 @@ local Logger = require("Logger")
 ---@field frameworkLateUpdateSequence table
 ---@field fixedUpdateSequence table
 ---@field lateUpdateSequence table
-local Core = {
-    CORE_VERSION = "0.0.1_20250107-Alpha",
-    LOGICAL_FRAME_RATE = 30,
-    FRAME_INTERVAL = 0.0333333333,
+local Core = {}
+Core.CORE_VERSION = "0.0.1_20250107-Alpha"
+Core.LOGICAL_FRAME_RATE = 30
+Core.FRAME_INTERVAL = 0.0333333333
 
-    frameCount = 0,
-    frameworkFixedUpdateSequence = {},
-    frameworkLateUpdateSequence = {},
-    fixedUpdateSequence = {},
-    lateUpdateSequence = {}
-}
+Core.frameCount = 0
+Core.frameworkFixedUpdateSequence = {}
+Core.frameworkLateUpdateSequence = {}
+Core.fixedUpdateSequence = {}
+Core.lateUpdateSequence = {}
 
 function Core.preHandlerWrapper()
     for _, value in pairs(Core.frameworkFixedUpdateSequence) do
@@ -77,7 +76,6 @@ function Core.loadTestFunctionList(testName)
 end
 
 function Core.runTest()
-    local frameCount = Core.frameCount
     local success = 0
     local failure = 0
     local total = 0
@@ -94,8 +92,8 @@ function Core.runTest()
             end
         end
     end
-    
-    local outputHeader = string.format("UNIT TEST\nframe count: %s\ntotal: %s\nsuccess: %s\nfailure: %s\ntest list address:%s\n\n", frameCount, total, success, failure, Test.testFunctionList)
+
+    local outputHeader = string.format("UNIT TEST\nframe count: %s\ntotal: %s\nsuccess: %s\nfailure: %s\ntest list address:%s\n\n", Core.frameCount, total, success, failure, Test.testFunctionList)
     local outputBody = ""
     for key, value in pairs(outputCache) do
         outputBody = outputBody .. string.format("-> function: %s\n    info:%s\n\n", key, value)
@@ -108,6 +106,5 @@ function Core.runTest()
     end
     print(outputHeader .. outputBody .. outputTail)
 end
-
 
 return Core

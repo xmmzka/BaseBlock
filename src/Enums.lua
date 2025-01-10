@@ -25,9 +25,8 @@ local ObjectType = {
     EFFECT = 3
 }
 
-local Enums = {
-    LogLevel = LogLevel,
-    ObjectType = ObjectType
-}
+local Enums = {}
+Enums.LogLevel = LogLevel
+Enums.ObjectType = ObjectType
 
 return Enums

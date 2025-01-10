@@ -10,16 +10,15 @@ local Logger = require("Logger")
 ---@field enabled boolean
 ---@field destroyed boolean
 ---@field wrappedCallback function
-local Timer = {
-    interval = 1.0,
-    count = 1,
-    currentCount = 0,
-    immediate = false,
-    task = function() end,
-    enabled = false,
-    destroyed = false,
-    wrappedCallback = function() end,
-}
+local Timer = {}
+Timer.interval = 1.0
+Timer.count = 1
+Timer.currentCount = 0
+Timer.immediate = false
+Timer.task = function() end
+Timer.enabled = false
+Timer.destroyed = false
+Timer.wrappedCallback = function() end
 Timer.__index = Timer
 
 function Timer.new(interval, count, immediate, task)

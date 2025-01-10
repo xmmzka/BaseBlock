@@ -1,5 +1,3 @@
-local BaseBlock = {}
-
 local Core = require("Core")
 local ConfigLoader = require("ConfigLoader")
 local Logger = require("Logger")
@@ -8,8 +6,9 @@ local Enums = require("Enums")
 local Frame = require("Frame")
 local Test = require("Test")
 local Timer = require("Timer")
-local Util  = require("Util")
+local Util = require("Util")
 
+local BaseBlock = {}
 --Load logic
 local title = string.format("BaseBlock Framework\n>>> V%s\n", Core.CORE_VERSION)
 print(title)

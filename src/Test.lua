@@ -8,10 +8,9 @@
 ]]
 
 ---@class Test
-local Test = {
-    testFunctionList = {},
-    enableStatusList = {},
-}
+local Test = {}
+Test.testFunctionList = {}
+Test.enableStatusList = {}
 
 function Test.assert(expect, actual)
     if expect ~= actual then
